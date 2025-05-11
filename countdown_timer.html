@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #282c34;
+            color: #61dafb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 4rem;
+            font-weight: bold;
+            background: #20232a;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #61dafb;
+        }
+        #input-container {
+            margin-top: 30px;
+        }
+        input[type="number"] {
+            width: 80px;
+            font-size: 1.5rem;
+            padding: 5px;
+            margin: 0 10px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+        }
+        button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #61dafb;
+            color: #282c34;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #21a1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Countdown Timer</h1>
+    <div id="timer">00:00:00</div>
+    <div id="input-container">
+        <input type="number" id="hours" placeholder="HH" min="0" max="99" />
+        <input type="number" id="minutes" placeholder="MM" min="0" max="59" />
+        <input type="number" id="seconds" placeholder="SS" min="0" max="59" />
+        <button id="start-btn">Start</button>
+        <button id="reset-btn">Reset</button>
+    </div>
+
+    <script>
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const hoursInput = document.getElementById('hours');
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+
+        let countdown;
+        let totalSeconds = 0;
+        let isRunning = false;
+
+        function updateDisplay(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDisplay.textContent = 
+                `${hrs.toString().padStart(2, '0')}:` +
+                `${mins.toString().padStart(2, '0')}:` +
+                `${secs.toString().padStart(2, '0')}`;
+        }
+
+        function startCountdown() {
+            if (isRunning) return;
+
+            const hrs = parseInt(hoursInput.value) || 0;
+            const mins = parseInt(minutesInput.value) || 0;
+            const secs = parseInt(secondsInput.value) || 0;
+
+            totalSeconds = hrs * 3600 + mins * 60 + secs;
+            if (totalSeconds <= 0) return alert('Please enter a valid time.');
+
+            updateDisplay(totalSeconds);
+            isRunning = true;
+
+            countdown = setInterval(() => {
+                totalSeconds--;
+                updateDisplay(totalSeconds);
+
+                if (totalSeconds <= 0) {
+                    clearInterval(countdown);
+                    isRunning = false;
+                    alert('Time is up!');
+                }
+            }, 1000);
+        }
+
+        function resetCountdown() {
+            clearInterval(countdown);
+            isRunning = false;
+            totalSeconds = 0;
+            updateDisplay(totalSeconds);
+            hoursInput.value = '';
+            minutesInput.value = '';
+            secondsInput.value = '';
+        }
+
+        startBtn.addEventListener('click', startCountdown);
+        resetBtn.addEventListener('click', resetCountdown);
+    </script>
+</body>
+</html>
